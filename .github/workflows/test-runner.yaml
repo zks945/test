@@ -1,27 +1,25 @@
-name: Test Runner with Labels
+name: Test Runner
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  test-docker-k8s:
-    runs-on: [self-hosted, docker, k8s]   # 指定必须满足这几个标签的 runner
+  build:
+    runs-on: self-hosted  # 自建 runner
+
     steps:
-      - name: Checkout code
+      # 使用 SSH 检出代码
+      - name: Checkout repository via SSH
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          persist-credentials: false  # 避免用 HTTPS token
 
-      - name: Print runner info
+      # 举例：运行 shell 脚本
+      - name: Run a test script
         run: |
-          echo "🎯 Running on a self-hosted runner with labels: docker, k8s"
-          echo "Hostname: $(hostname)"
-          echo "System: $(uname -a)"
-          echo "User: $(whoami)"
+          echo "Hello, SSH checkout!"
+          ls -al
 
-      - name: Check Docker
-        run: |
-          docker --version || echo "⚠️ Docker not found on this runner"
-
-      - name: Check K8s
-        run: |
-          kubectl version --client || echo "⚠️ kubectl not found on this runner"
