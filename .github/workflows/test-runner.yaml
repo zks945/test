@@ -1,0 +1,27 @@
+name: Test Runner with Labels
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-docker-k8s:
+    runs-on: [self-hosted, docker, k8s]   # 指定必须满足这几个标签的 runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print runner info
+        run: |
+          echo "🎯 Running on a self-hosted runner with labels: docker, k8s"
+          echo "Hostname: $(hostname)"
+          echo "System: $(uname -a)"
+          echo "User: $(whoami)"
+
+      - name: Check Docker
+        run: |
+          docker --version || echo "⚠️ Docker not found on this runner"
+
+      - name: Check K8s
+        run: |
+          kubectl version --client || echo "⚠️ kubectl not found on this runner"
